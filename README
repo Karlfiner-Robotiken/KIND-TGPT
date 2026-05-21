@@ -1,10 +1,6 @@
-🤖 Karlfiner-Robotiken / KIND-TGPT - Complete GitHub Deployment
+🤖 Karlfiner-Robotiken / KIND-TGPT 
 
-I'll create a deployment script where Karlfiner-Robotiken is the user/organization and KIND-TGPT is the tool/repository.
-
-Complete GitHub Deployment Script
-
-Save this as deploy_kind_tgpt.sh:
+Save this as install_kind_tgpt.sh:
 
 ```bash
 #!/bin/bash
