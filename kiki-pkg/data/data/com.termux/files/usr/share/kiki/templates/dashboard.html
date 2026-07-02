@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KIKI AI</title>
+    <style>
+        *{margin:0;padding:0;box-sizing:border-box}
+        body{font-family:system-ui;min-height:100vh;background:linear-gradient(135deg,#667eea,#764ba2);padding:20px}
+        .container{max-width:1400px;margin:0 auto}
+        .header{background:rgba(255,255,255,0.15);backdrop-filter:blur(10px);border-radius:20px;padding:30px;margin-bottom:20px;text-align:center}
+        .header h1{font-size:3em;background:linear-gradient(135deg,#fff,#ffd6e8);-webkit-background-clip:text;background-clip:text;color:transparent}
+        .status{display:inline-block;padding:5px 15px;background:rgba(76,175,80,0.3);border-radius:20px;color:white;margin-top:10px}
+        .stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:15px;margin-bottom:20px}
+        .stat-card{background:rgba(255,255,255,0.1);backdrop-filter:blur(10px);padding:20px;border-radius:15px;text-align:center}
+        .stat-number{font-size:2.5em;font-weight:bold;color:white}
+        .stat-label{color:rgba(255,255,255,0.8);margin-top:5px}
+        .main-grid{display:grid;grid-template-columns:1fr 400px;gap:20px}
+        .chat-card{background:rgba(255,255,255,0.1);backdrop-filter:blur(10px);border-radius:20px;display:flex;flex-direction:column;height:600px}
+        .chat-header{background:rgba(255,255,255,0.15);padding:20px;display:flex;justify-content:space-between;align-items:center}
+        .clear-btn{background:rgba(255,68,68,0.3);padding:8px 16px;border-radius:20px;color:white;cursor:pointer;border:none}
+        .messages{flex:1;overflow-y:auto;padding:20px}
+        .message{margin-bottom:15px}
+        .user-message{text-align:right}
+        .user-message .message-content{background:linear-gradient(135deg,#667eea,#764ba2);color:white;display:inline-block;padding:10px 15px;border-radius:15px;max-width:80%}
+        .ai-message .message-content{background:rgba(255,255,255,0.15);backdrop-filter:blur(5px);display:inline-block;padding:10px 15px;border-radius:15px;max-width:80%;color:white}
+        .input-area{padding:20px;display:flex;gap:10px}
+        .input-area input{flex:1;padding:12px;background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.2);border-radius:25px;color:white}
+        .input-area button{padding:12px 30px;background:linear-gradient(135deg,#667eea,#764ba2);color:white;border:none;border-radius:25px;cursor:pointer}
+        .sidebar-card{background:rgba(255,255,255,0.1);backdrop-filter:blur(10px);border-radius:20px;padding:20px;height:600px;overflow-y:auto}
+        .tabs{display:flex;gap:10px;margin-bottom:20px}
+        .tab-btn{flex:1;padding:12px;background:rgba(255,255,255,0.1);border:none;border-radius:10px;color:white;cursor:pointer}
+        .tab-btn.active{background:linear-gradient(135deg,#667eea,#764ba2)}
+        .tab-content{display:none}
+        .tab-content.active{display:block}
+        .setting-item{margin-bottom:20px}
+        .setting-item label{display:block;margin-bottom:8px;color:white}
+        .setting-item select{width:100%;padding:10px;background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.2);border-radius:10px;color:white}
+        .mode-option{margin-bottom:12px}
+        .mode-option input{display:none}
+        .mode-option label{display:block;padding:12px;background:rgba(255,255,255,0.1);border-radius:10px;cursor:pointer}
+        .mode-option input:checked+label{background:linear-gradient(135deg,#667eea,#764ba2)}
+        .history-item{padding:12px;border-bottom:1px solid rgba(255,255,255,0.1);cursor:pointer}
+        button{padding:12px;background:rgba(255,255,255,0.15);border-radius:10px;color:white;cursor:pointer;width:100%;margin-top:10px}
+        @media(max-width:768px){.main-grid{grid-template-columns:1fr}}
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="header"><h1>✨ KIKI AI Assistant ✨</h1><div class="status">🟢 Online</div></div>
+    <div class="stats-grid"><div class="stat-card"><div class="stat-number" id="totalChats">0</div><div class="stat-label">💬 Chats</div></div><div class="stat-card"><div class="stat-number" id="activeMode">Standard</div><div class="stat-label">🎯 Mode</div></div></div>
+    <div class="main-grid">
+        <div class="chat-card">
+            <div class="chat-header">💬 Chat with KIKI<button class="clear-btn" onclick="clearChat()">🗑️ Clear</button></div>
+            <div class="messages" id="messages"><div class="message ai-message"><div class="message-content">👋 Hello! I'm KIKI, your AI assistant.</div></div></div>
+            <div class="input-area"><input type="text" id="questionInput" placeholder="Ask me anything..." onkeypress="if(event.key=='Enter')sendMessage()"><button onclick="sendMessage()">➤ Send</button></div>
+        </div>
+        <div class="sidebar-card">
+            <div class="tabs"><button class="tab-btn active" onclick="switchTab('settings')">⚙️ Settings</button><button class="tab-btn" onclick="switchTab('modes')">🎮 Modes</button><button class="tab-btn" onclick="switchTab('history')">📜 History</button></div>
+            <div id="settings-tab" class="tab-content active">
+                <div class="setting-item"><label>🎨 Theme</label><select id="themeSelect"><option value="glass">Glass</option><option value="dark">Dark</option><option value="light">Light</option></select></div>
+                <div class="setting-item"><label>🧠 Personality</label><select id="personalitySelect"><option value="friendly">Friendly</option><option value="professional">Professional</option><option value="funny">Funny</option></select></div>
+                <div class="setting-item"><label>📏 Response Length</label><select id="lengthSelect"><option value="short">Short</option><option value="medium">Medium</option><option value="long">Long</option></select></div>
+                <button onclick="saveSettings()">💾 Save</button>
+            </div>
+            <div id="modes-tab" class="tab-content">
+                <div class="mode-option"><input type="radio" name="mode" id="m1" value="standard"><label for="m1">📝 Standard</label></div>
+                <div class="mode-option"><input type="radio" name="mode" id="m2" value="coding"><label for="m2">💻 Coding</label></div>
+                <div class="mode-option"><input type="radio" name="mode" id="m3" value="creative"><label for="m3">🎨 Creative</label></div>
+                <div class="mode-option"><input type="radio" name="mode" id="m4" value="educational"><label for="m4">📚 Educational</label></div>
+                <div class="mode-option"><input type="radio" name="mode" id="m5" value="technical"><label for="m5">🔧 Technical</label></div>
+                <div class="mode-option"><input type="radio" name="mode" id="m6" value="fun"><label for="m6">🎉 Fun</label></div>
+            </div>
+            <div id="history-tab" class="tab-content"><div id="historyList">Loading...</div></div>
+        </div>
+    </div>
+</div>
+<script>
+let currentMode='standard';
+async function loadSettings(){const r=await fetch('/api/settings'),s=await r.json();if(s.theme)document.getElementById('themeSelect').value=s.theme;if(s.personality)document.getElementById('personalitySelect').value=s.personality;if(s.response_length)document.getElementById('lengthSelect').value=s.response_length;if(s.current_mode){currentMode=s.current_mode;document.querySelector(`input[name="mode"][value="${currentMode}"]`).checked=true;updateModeDisplay()}}
+function updateModeDisplay(){const n={standard:'Standard',coding:'Coding',creative:'Creative',educational:'Educational',technical:'Technical',fun:'Fun'};document.getElementById('activeMode').innerHTML=n[currentMode]}
+function switchTab(t){document.getElementById('settings-tab').classList.remove('active');document.getElementById('modes-tab').classList.remove('active');document.getElementById('history-tab').classList.remove('active');document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));if(t==='settings'){document.getElementById('settings-tab').classList.add('active');document.querySelectorAll('.tab-btn')[0].classList.add('active');}else if(t==='modes'){document.getElementById('modes-tab').classList.add('active');document.querySelectorAll('.tab-btn')[1].classList.add('active');}else{document.getElementById('history-tab').classList.add('active');document.querySelectorAll('.tab-btn')[2].classList.add('active');loadHistory();}}
+document.querySelectorAll('input[name="mode"]').forEach(r=>{r.addEventListener('change',async(e)=>{if(e.target.checked){currentMode=e.target.value;updateModeDisplay();await fetch('/api/settings',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({current_mode:currentMode})})}})});
+async function sendMessage(){const i=document.getElementById('questionInput'),q=i.value.trim();if(!q)return;addMessage(q,'user');i.value='';const t=addTypingIndicator();try{const r=await fetch('/api/chat',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({question:q})}),d=await r.json();t.remove();if(d.success){addMessage(d.answer,'ai');if(document.getElementById('history-tab').classList.contains('active'))loadHistory();loadStats();}else addMessage('Error: '+d.error,'ai');}catch(e){t.remove();addMessage('Error: '+e.message,'ai');}}
+function addMessage(t,s){const m=document.getElementById('messages'),d=document.createElement('div');d.className=`message ${s}-message`;let f=t.replace(/```(\w*)\n([\s\S]*?)```/g,'<pre><code>$2</code></pre>');f=f.replace(/\n/g,'<br>');d.innerHTML=`<div class="message-content">${f}</div>`;m.appendChild(d);m.scrollTop=m.scrollHeight;}
+function addTypingIndicator(){const m=document.getElementById('messages'),i=document.createElement('div');i.className='message ai-message typing-indicator';i.innerHTML='<div class="message-content">⏳ KIKI is thinking...</div>';m.appendChild(i);m.scrollTop=m.scrollHeight;return i;}
+async function loadHistory(){const r=await fetch('/api/history'),h=await r.json(),d=document.getElementById('historyList');if(h.length===0){d.innerHTML='<div style="text-align:center;color:rgba(255,255,255,0.6)">No history</div>';return}d.innerHTML=h.map(i=>`<div class="history-item" onclick="document.getElementById('questionInput').value='${i.question.replace(/'/g,"\\'")}';document.getElementById('questionInput').focus();switchTab('settings');"><div>${i.question.substring(0,50)}</div><div><small>${i.mode}</small> ${new Date(i.timestamp).toLocaleTimeString()}</div></div>`).join('');}
+async function loadStats(){const r=await fetch('/api/stats'),s=await r.json();document.getElementById('totalChats').innerHTML=s.total;}
+async function saveSettings(){const s={theme:document.getElementById('themeSelect').value,personality:document.getElementById('personalitySelect').value,response_length:document.getElementById('lengthSelect').value};await fetch('/api/settings',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(s)});alert('✅ Settings saved');}
+async function clearChat(){if(confirm('Clear chat?'))document.getElementById('messages').innerHTML='<div class="message ai-message"><div class="message-content">✨ Chat cleared</div></div>';}
+loadSettings();loadStats();setInterval(loadStats,30000);
+</script>
+</body>
+</html>

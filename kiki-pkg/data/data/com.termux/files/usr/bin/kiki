@@ -1,0 +1,5 @@
+#!/data/data/com.termux/files/usr/bin/bash
+GREEN="\e[1;32m"; YELLOW="\e[1;33m"; PINK="\e[1;35m"; RESET="\e[0m"
+start_web(){ echo -e "${PINK}🚀 KIKI Web @ http://localhost:5000${RESET}"; cd $HOME/.kiki; python3 dashboard.py; }
+start_cli(){ echo -e "${PINK}╔════════════════╗\n║ KIKI CLI MODE ║\n╚════════════════╝${RESET}"; tgpt -i; }
+case "$1" in -w|--web) start_web;; -h|--help) echo "Usage: kiki [--web|question]";; "") start_cli;; *) echo -e "${PINK}💬 KIKI:${RESET}"; tgpt "$*";; esac

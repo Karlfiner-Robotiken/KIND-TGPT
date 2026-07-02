@@ -1,0 +1,13 @@
+#!/data/data/com.termux/files/usr/bin/bash
+pip install flask flask-cors --quiet
+if ! command -v tgpt &> /dev/null; then
+    if [ "$(uname -m)" = "aarch64" ]; then
+        curl -L -o $PREFIX/bin/tgpt https://github.com/aandrew-me/tgpt/releases/latest/download/tgpt-arm64
+    elif [ "$(uname -m)" = "armv7l" ]; then
+        curl -L -o $PREFIX/bin/tgpt https://github.com/aandrew-me/tgpt/releases/latest/download/tgpt-arm
+    else
+        curl -L -o $PREFIX/bin/tgpt https://github.com/aandrew-me/tgpt/releases/latest/download/tgpt-amd64
+    fi
+    chmod +x $PREFIX/bin/tgpt
+fi
+mkdir -p $HOME/.kiki

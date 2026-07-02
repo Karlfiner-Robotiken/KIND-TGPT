@@ -1,0 +1,10 @@
+Package: kiki
+Version: 2.0.0
+Section: utils
+Priority: optional
+Architecture: all
+Depends: python, flask, curl, wget, jq
+Maintainer: Karlfiner-Robotiken
+Description: KIKI AI - Futuristic AI Assistant for Termux
+ Features: 6 AI modes, glass UI, chat history, web dashboard.
+Homepage: https://github.com/Karlfiner-Robotiken/kiki
